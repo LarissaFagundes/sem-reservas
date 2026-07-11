@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sem Reservas — Diagnóstico de Voz | Larissa Fagundes</title>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #F5F0E8; font-family: 'EB Garamond', Georgia, serif; }
+    #root { min-height: 100vh; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    textarea:focus { outline: none; }
+    button { font-family: 'EB Garamond', Georgia, serif; cursor: pointer; }
+    textarea { font-family: 'EB Garamond', Georgia, serif; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+const { useState } = React;
+
+const C = {
+  bg: "#F5F0E8", bgCard: "#FDFAF4", dark: "#2C1A0E", mid: "#6B4C2A",
+  accent: "#8B6914", accentLight: "#D4A853", muted: "#9E8060",
+  border: "#DDD0B8", borderLight: "#EDE5D5"
+};
+
+const TF = { fontFamily: "'Playfair Display', Georgia, serif" };
+const EF = { fontFamily: "'EB Garamond', Georgia, serif" };
+
+const questions = [
+  {
+    id: "infancia",
+    block: "Quem você sempre foi",
+    num: "01",
+    label: "Quando você era criança ou adolescente, o que você fazia que te fazia perder a noção do tempo — algo que escolhia por vontade própria, sem ninguém pedir?",
+    hint: "Não precisa ser nada grandioso. Pode ser colecionar algo, resolver problemas, cuidar de pessoas, organizar ideias, contar histórias. O que importa é que era genuinamente seu.",
+    rows: 5,
+  },
+  {
+    id: "talento",
+    block: "Quem você sempre foi",
+    num: "01",
+    label: "Pense em algo que você faz hoje — no trabalho ou fora dele — que as pessoas ao seu redor pedem sua ajuda com frequência, mas que para você parece óbvio, quase simples demais para ser considerado um talento. O que é isso?",
+    hint: "Talentos reais costumam ser invisíveis para quem os tem. Se alguém já te disse 'você tem um jeito especial de...' ou 'como você consegue...', essa é uma pista.",
+    rows: 5,
+  },
+  {
+    id: "lacuna",
+    block: "O que você enxerga",
+    num: "02",
+    label: "Quando você observa pessoas na sua área de atuação — qual é a lacuna que você enxerga com mais clareza? O que está faltando que ninguém parece estar oferecendo do jeito certo?",
+    hint: "Pode ser uma forma de tratar, de explicar, de acolher, de resolver, de se comunicar. Algo que te incomoda ver sendo feito de forma incompleta ou errada.",
+    rows: 5,
+  },
+  {
+    id: "impacto",
+    block: "O que você enxerga",
+    num: "02",
+    label: "Descreva um momento real em que você ajudou alguém e percebeu que aquilo foi além do esperado. O que você fez, o que a pessoa disse ou demonstrou, e o que você sentiu naquele momento?",
+    hint: "Não precisa ser um grande marco. Pode ser uma conversa, uma orientação, uma presença. O que importa é que algo mudou para aquela pessoa por causa de você.",
+    rows: 5,
+  },
+  {
+    id: "paixao",
+    block: "O que você tem a dizer",
+    num: "03",
+    label: "Se você pudesse passar uma semana falando sobre um único assunto para qualquer pessoa que quisesse te ouvir — sem cobrar, só porque você ama — qual seria esse assunto?",
+    hint: "Pode ser dentro ou fora da sua profissão. O critério é só um: você falaria sobre isso com prazer, por horas, sem se cansar.",
+    rows: 4,
+  },
+  {
+    id: "raiva",
+    block: "O que você tem a dizer",
+    num: "03",
+    label: "O que te incomoda de forma visceral no mundo, na sua área ou no jeito como as pessoas são tratadas? O que você não aguenta ver acontecendo e sente que precisa mudar?",
+    hint: "Raiva honesta aponta para missão. Não censure. O que te faz querer levantar e fazer algo diferente?",
+    rows: 4,
+  },
+  {
+    id: "mensagem",
+    block: "O que você tem a dizer",
+    num: "03",
+    label: "Se você soubesse que ia morrer em 30 dias, qual seria a mensagem que você precisaria deixar ao mundo? O que não pode ficar por dizer?",
+    hint: "Não pense no que soaria bem. Pense no que ficaria inacabado se você fosse embora sem falar. Essa resposta costuma ser o centro do seu lugar de fala.",
+    rows: 5,
+  },
+  {
+    id: "resultado",
+    block: "O que o mundo reconhece em você",
+    num: "04",
+    label: "Dentro do que você faz profissionalmente, qual é o resultado concreto que você entrega — não o processo, não o método, mas o que muda na vida de quem trabalha com você?",
+    hint: "Tente expressar isso do ponto de vista de quem recebeu. O que essa pessoa tem depois de passar por você que não tinha antes?",
+    rows: 5,
+  },
+  {
+    id: "escolha",
+    block: "O que o mundo reconhece em você",
+    num: "04",
+    label: "Que tipo de pessoa te procura com mais frequência — e por que você acredita que te escolhem e não outra profissional com a mesma formação?",
+    hint: "Se tiver dificuldade, pense: o que as pessoas falam quando te indicam para alguém? Qual é a frase que elas usam?",
+    rows: 4,
+  },
+  {
+    id: "voz",
+    block: "O que você ainda não disse",
+    num: "05",
+    label: "Tem algo que você pensa com frequência mas ainda não fala publicamente porque tem medo de como vai ser recebido? O que é isso?",
+    hint: "Essa costuma ser a resposta mais importante de todo o diagnóstico. O que você segurou até agora é muitas vezes exatamente o que diferencia você de todo mundo.",
+    rows: 5,
+  },
+  {
+    id: "persona",
+    block: "O que você ainda não disse",
+    num: "05",
+    label: "Descreva com detalhes a pessoa que você mais quer ajudar — não um público-alvo, uma pessoa real. Quem é ela, o que ela carrega, o que ela tenta fazer e não consegue?",
+    hint: "Quanto mais específica for essa resposta, mais poderoso será o diagnóstico. 'A Juliana, advogada de 38 anos, que sabe que é boa mas se sente invisível online' — isso ajuda.",
+    rows: 5,
+  },
+];
+
+const SYSTEM_PROMPT = `Você é Larissa Fagundes, estrategista de marca e conteúdo especializada em autoconhecimento profundo para profissionais liberais. Você domina a interseção entre identidade, propósito e presença digital.
+
+A partir das respostas abaixo, gere um diagnóstico de marca pessoal completo, coeso e profundamente personalizado. Use TODAS as respostas para cruzar informações — não trate cada pergunta isoladamente.
+
+Estrutura obrigatória:
+
+## Sua Essência
+
+[3 parágrafos revelando quem essa pessoa é de verdade — não o que ela faz, mas quem ela é. Conecte o que ela amava na infância com o que ela faz hoje. Mostre o fio condutor entre sua história, seus talentos naturais e o que a move. Use as respostas sobre infância, talento invisível e impacto real.]
+
+---
+
+## Sua Frase Central
+
+> [Uma frase única, específica e memorável que capture ao mesmo tempo quem ela é, o que ela oferece e para quem. Não é slogan genérico. É a síntese de tudo que ela respondeu, em uma linha.]
+
+---
+
+## Seu Lugar de Fala
+
+[2 parágrafos definindo o território específico onde essa pessoa tem autoridade real para falar — não pela formação, mas pela combinação única de experiência, perspectiva e o que ela enxerga que outros não enxergam. Use as respostas sobre lacuna, raiva visceral e o que ela nunca disse publicamente.]
+
+---
+
+## Suas Linhas Editoriais
+
+Liste exatamente 4 linhas editoriais. Cada uma deve emergir diretamente das respostas — nada genérico.
+
+**[Nome da linha]**
+[2-3 linhas explicando por que esse tema é dela, o que ela tem a dizer sobre ele de forma única, e como ele se manifesta no conteúdo.]
+
+**[Nome da linha]**
+[...]
+
+**[Nome da linha]**
+[...]
+
+**[Nome da linha]**
+[...]
+
+---
+
+## O Ponto em que Tudo se Encontra
+
+[2 parágrafos revelando onde a paixão dela, o talento dela, o que o mundo precisa e pelo que ela pode ser reconhecida e paga se encontram. Não use esses termos literalmente — mostre através das respostas dela. Este é o coração do diagnóstico.]
+
+---
+
+## O Que Você Estava Segurando
+
+[2 parágrafos diretos sobre o que apareceu nas respostas que ela ainda não diz publicamente. O que ela pode e deve começar a falar. Tom: encorajador mas honesto, sem romantizar.]
+
+---
+
+## Uma Palavra Para Você
+
+[Um parágrafo final pessoal, caloroso e direto. Como quem termina uma sessão de consultoria — não um discurso motivacional, mas uma verdade dita com afeto. Referência ao que ela quer deixar de legado.]
+
+---
+
+REGRAS ABSOLUTAS:
+- Cruze todas as respostas entre si. Cada seção deve conectar pontos de perguntas diferentes.
+- Nunca escreva algo que poderia se aplicar a qualquer pessoa.
+- Nunca mencione Ikigai, lugar de fala, linhas editoriais ou qualquer termo técnico dentro do texto (exceto nos títulos das seções).
+- Tom: quente, direto, revelador. Como quem leu tudo com atenção e se importou.
+- Se uma resposta for vaga, trabalhe com o que foi dado — nunca invente.`;
+
+function Anchor() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.accentLight} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="5" r="3"/>
+      <line x1="12" y1="8" x2="12" y2="22"/>
+      <path d="M5 15l7 7 7-7"/>
+      <path d="M5 12H2a10 10 0 0020 0h-3"/>
+    </svg>
+  );
+}
+
+export default function SemReservas() {
+  const [step, setStep] = useState("intro");
+  const [answers, setAnswers] = useState({});
+  const [current, setCurrent] = useState(0);
+  const [result, setResult] = useState("");
+  const [error, setError] = useState("");
+
+  const q = questions[current];
+  const blockNums = [...new Set(questions.map(q => q.num))];
+  const currentBlockNum = q.num;
+
+  function handleAnswer(v) { setAnswers(p => ({ ...p, [q.id]: v })); }
+  function next() { current < questions.length - 1 ? setCurrent(c => c + 1) : generate(); }
+  function prev() { if (current > 0) setCurrent(c => c - 1); }
+
+  async function generate() {
+    setStep("loading"); setError("");
+    const content = questions.map(q => `${q.label}\n${answers[q.id] || "(sem resposta)"}`).join("\n\n");
+    try {
+      const r = await fetch("https://vavcyaxsszyczjqafnfx.supabase.co/functions/v1/anthropic-proxy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 2500, system: SYSTEM_PROMPT, messages: [{ role: "user", content }] })
+      });
+      const d = await r.json();
+      const t = (d.content || []).map(b => b.text || "").join("");
+      if (!t) throw new Error("vazio");
+      setResult(t); setStep("result");
+    } catch (e) {
+      setError("Algo deu errado. Tente novamente.");
+      setStep("form");
+    }
+  }
+
+  function downloadPDF() {
+    const lines = result.split("\n").map(l => {
+      if (l.startsWith("## ")) return `<h2>${l.replace("## ", "")}</h2>`;
+      if (l.startsWith("> ")) return `<blockquote>${l.replace("> ", "")}</blockquote>`;
+      if (l.startsWith("**") && l.endsWith("**")) return `<p><strong>${l.replace(/\*\*/g, "")}</strong></p>`;
+      if (l.startsWith("---")) return "<hr>";
+      if (l.trim() === "") return "<br>";
+      return `<p>${l}</p>`;
+    }).join("");
+    const h = `<html><head><meta charset="UTF-8"><style>body{font-family:Georgia,serif;color:#2C1A0E;padding:60px;max-width:740px;margin:0 auto;line-height:1.8}.hdr{text-align:center;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid #DDD0B8}.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#8B6914;margin-bottom:12px}h1{font-size:2rem;color:#2C1A0E;margin:0}h2{font-size:1.2rem;color:#6B4C2A;margin-top:40px;margin-bottom:12px}blockquote{border-left:3px solid #D4A853;padding-left:20px;margin:24px 0;font-style:italic;font-size:1.15rem;color:#6B4C2A}p{margin-bottom:14px}strong{font-weight:600}hr{border:none;border-top:1px solid #DDD0B8;margin:32px 0}.ftr{text-align:center;margin-top:60px;font-size:.8rem;color:#9E8060}</style></head><body><div class="hdr"><div class="brand">Larissa Fagundes · Sem Reservas</div><h1>Diagnóstico de Voz</h1></div>${lines}<div class="ftr">larissampfagundes.com.br</div></body></html>`;
+    const b = new Blob([h], { type: "text/html" });
+    const u = URL.createObjectURL(b);
+    const w = window.open(u, "_blank");
+    if (w) { w.onload = () => { w.print(); URL.revokeObjectURL(u); }; }
+  }
+
+  function renderMD(text) {
+    return text.split("\n").map((line, i) => {
+      if (line.startsWith("## ")) return <h2 key={i} style={{ ...TF, color: C.mid, fontSize: "1.25rem", fontWeight: 700, marginTop: "2.5rem", marginBottom: "0.6rem" }}>{line.replace("## ", "")}</h2>;
+      if (line.startsWith("**") && line.endsWith("**")) return <p key={i} style={{ fontWeight: 600, color: C.dark, marginTop: "1rem" }}>{line.replace(/\*\*/g, "")}</p>;
+      if (line.startsWith("> ")) return <blockquote key={i} style={{ borderLeft: `3px solid ${C.accentLight}`, paddingLeft: "1.25rem", margin: "1.5rem 0", fontStyle: "italic", color: C.mid, fontSize: "1.15rem", lineHeight: 1.7 }}>{line.replace("> ", "")}</blockquote>;
+      if (line.startsWith("---")) return <hr key={i} style={{ border: "none", borderTop: `1px solid ${C.border}`, margin: "2rem 0" }} />;
+      if (line.trim() === "") return <br key={i} />;
+      return <p key={i} style={{ color: C.dark, lineHeight: 1.85, marginBottom: "0.3rem" }}>{line}</p>;
+    });
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", background: C.bg, ...EF }}>
+
+      {/* INTRO */}
+      {step === "intro" && (
+        <div style={{ maxWidth: 620, margin: "0 auto", padding: "5rem 2rem", textAlign: "center" }}>
+          <div style={{ marginBottom: "2rem" }}><Anchor /></div>
+          <p style={{ color: C.accent, fontSize: "0.72rem", letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: "1.25rem" }}>Larissa Fagundes</p>
+          <h1 style={{ ...TF, fontSize: "3.75rem", fontWeight: 700, color: C.dark, lineHeight: 1.05, marginBottom: "1.5rem" }}>Sem Reservas</h1>
+          <p style={{ color: C.mid, fontSize: "1.15rem", lineHeight: 1.8, marginBottom: "2rem" }}>
+            Um diagnóstico de voz e propósito feito a partir de quem você é — não do que você faz.
+          </p>
+          <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: "2px", padding: "1.25rem 1.75rem", marginBottom: "2.75rem", textAlign: "left" }}>
+            <p style={{ color: C.dark, fontSize: "0.97rem", lineHeight: 1.75, margin: 0 }}>
+              <strong>Antes de começar:</strong> este diagnóstico é tão preciso quanto as suas respostas. Respostas vagas e incompletas geram um documento igualmente vago e incompleto. Reserve 20 minutos de verdade, sem pressa, e responda com toda a honestidade que você conseguir. Quanto mais específica você for, mais poderoso será o que vai receber.
+            </p>
+          </div>
+          <button
+            onClick={() => setStep("form")}
+            style={{ background: C.dark, color: C.bgCard, border: "none", borderRadius: "2px", padding: "1rem 3rem", fontSize: "1rem", letterSpacing: "0.1em", textTransform: "uppercase", transition: "background 0.2s" }}
+            onMouseOver={e => e.currentTarget.style.background = C.mid}
+            onMouseOut={e => e.currentTarget.style.background = C.dark}
+          >
+            Começar
+          </button>
+          <p style={{ color: C.muted, fontSize: "0.78rem", marginTop: "1.5rem", letterSpacing: "0.06em" }}>11 perguntas · aproximadamente 20 minutos</p>
+        </div>
+      )}
+
+      {/* FORM */}
+      {step === "form" && (
+        <div style={{ maxWidth: 700, margin: "0 auto", padding: "3rem 2rem 5rem" }}>
+          {/* Header */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+            <p style={{ color: C.accent, fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", margin: 0 }}>Sem Reservas</p>
+            <p style={{ color: C.muted, fontSize: "0.85rem", margin: 0 }}>{current + 1} de {questions.length}</p>
+          </div>
+
+          {/* Progress */}
+          <div style={{ height: "2px", background: C.borderLight, marginBottom: "0.75rem" }}>
+            <div style={{ height: "100%", background: C.accent, width: `${((current + 1) / questions.length) * 100}%`, transition: "width 0.4s ease" }} />
+          </div>
+
+          {/* Block dots */}
+          <div style={{ display: "flex", gap: "0.4rem", marginBottom: "2.5rem" }}>
+            {blockNums.map(n => (
+              <div key={n} style={{ height: 3, flex: 1, borderRadius: 2, background: n <= currentBlockNum ? C.accent : C.borderLight, transition: "background 0.3s" }} />
+            ))}
+          </div>
+
+          {/* Block label */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", background: C.bgCard, border: `1px solid ${C.border}`, padding: "0.3rem 0.9rem", borderRadius: "2px", marginBottom: "1.5rem" }}>
+            <span style={{ color: C.accentLight, fontSize: "0.7rem", fontWeight: 700 }}>{q.num}</span>
+            <span style={{ color: C.muted, fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>{q.block}</span>
+          </div>
+
+          {/* Question */}
+          <h2 style={{ ...TF, fontSize: "1.45rem", color: C.dark, lineHeight: 1.5, marginBottom: "0.75rem", fontWeight: 700 }}>{q.label}</h2>
+          <p style={{ color: C.muted, fontSize: "0.95rem", lineHeight: 1.65, marginBottom: "1.5rem", fontStyle: "italic" }}>{q.hint}</p>
+
+          {/* Textarea */}
+          <textarea
+            rows={q.rows}
+            value={answers[q.id] || ""}
+            onChange={e => handleAnswer(e.target.value)}
+            placeholder="Escreva aqui..."
+            style={{ width: "100%", border: `1px solid ${C.border}`, borderRadius: "2px", padding: "1rem 1.25rem", fontSize: "1.05rem", color: C.dark, background: C.bgCard, lineHeight: 1.8, resize: "vertical", transition: "border-color 0.2s" }}
+            onFocus={e => e.target.style.borderColor = C.accent}
+            onBlur={e => e.target.style.borderColor = C.border}
+          />
+
+          {error && <p style={{ color: "#8B1A1A", fontSize: "0.9rem", marginTop: "0.75rem" }}>{error}</p>}
+
+          {/* Nav */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "2rem" }}>
+            <button onClick={prev} disabled={current === 0} style={{ background: "none", border: `1px solid ${C.border}`, color: C.muted, padding: "0.75rem 1.5rem", borderRadius: "2px", opacity: current === 0 ? 0.4 : 1, fontSize: "0.9rem" }}>
+              Voltar
+            </button>
+            <button
+              onClick={next}
+              disabled={!(answers[q.id] && answers[q.id].trim())}
+              style={{ background: (answers[q.id] && answers[q.id].trim()) ? C.dark : C.borderLight, color: (answers[q.id] && answers[q.id].trim()) ? C.bgCard : C.muted, border: "none", borderRadius: "2px", padding: "0.75rem 2.25rem", fontSize: "0.95rem", letterSpacing: "0.07em", textTransform: "uppercase", transition: "background 0.2s" }}
+            >
+              {current === questions.length - 1 ? "Gerar diagnóstico" : "Próxima"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* LOADING */}
+      {step === "loading" && (
+        <div style={{ maxWidth: 600, margin: "0 auto", padding: "7rem 2rem", textAlign: "center" }}>
+          <div style={{ width: 46, height: 46, border: `2px solid ${C.borderLight}`, borderTop: `2px solid ${C.accent}`, borderRadius: "50%", margin: "0 auto 2.5rem", animation: "spin 1s linear infinite" }} />
+          <h2 style={{ ...TF, color: C.dark, fontSize: "1.5rem", fontWeight: 700, marginBottom: "1rem" }}>Cruzando suas respostas</h2>
+          <p style={{ color: C.muted, lineHeight: 1.8 }}>Isso leva alguns segundos.<br />Suas respostas estão sendo lidas com atenção.</p>
+        </div>
+      )}
+
+      {/* RESULT */}
+      {step === "result" && (
+        <div style={{ maxWidth: 760, margin: "0 auto", padding: "4rem 2rem 6rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <div style={{ marginBottom: "1.25rem" }}><Anchor /></div>
+            <p style={{ color: C.accent, fontSize: "0.7rem", letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Larissa Fagundes · Sem Reservas</p>
+            <h1 style={{ ...TF, fontSize: "2.25rem", color: C.dark, fontWeight: 700, margin: 0 }}>Seu Diagnóstico de Voz</h1>
+          </div>
+          <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: "2px", padding: "2.75rem 3.25rem" }}>
+            {renderMD(result)}
+          </div>
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2.5rem", flexWrap: "wrap" }}>
+            <button
+              onClick={downloadPDF}
+              style={{ background: C.dark, color: C.bgCard, border: "none", borderRadius: "2px", padding: "0.9rem 2.5rem", fontSize: "0.9rem", letterSpacing: "0.08em", textTransform: "uppercase", transition: "background 0.2s" }}
+              onMouseOver={e => e.currentTarget.style.background = C.mid}
+              onMouseOut={e => e.currentTarget.style.background = C.dark}
+            >
+              Baixar PDF
+            </button>
+            <button
+              onClick={() => { setStep("intro"); setAnswers({}); setCurrent(0); setResult(""); }}
+              style={{ background: "none", border: `1px solid ${C.border}`, color: C.mid, padding: "0.9rem 2.5rem", borderRadius: "2px", fontSize: "0.9rem", letterSpacing: "0.08em", textTransform: "uppercase" }}
+            >
+              Recomeçar
+            </button>
+          </div>
+          <p style={{ textAlign: "center", color: C.muted, fontSize: "0.8rem", marginTop: "1rem" }}>O PDF abrirá em nova aba para impressão ou download.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<SemReservas />);
+  </script>
+</body>
+</html>
