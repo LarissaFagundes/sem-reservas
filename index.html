@@ -74,12 +74,10 @@ textarea:focus{border-color:#8B6914;}
 .result-card hr{border:none;border-top:1px solid #DDD0B8;margin:2rem 0;}
 .result-buttons{display:flex;gap:1rem;justify-content:center;margin-top:2.5rem;flex-wrap:wrap;}
 .anchor-icon{margin-bottom:1.25rem;}
-svg{display:inline-block;}
 </style>
 </head>
 <body>
 
-<!-- INTRO -->
 <div id="screen-intro" class="screen active">
   <div class="anchor-icon">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4A853" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
@@ -91,13 +89,12 @@ svg{display:inline-block;}
   <h1>Sem Reservas</h1>
   <p class="subtitle">Um diagnóstico de voz e propósito feito a partir de quem você é — não do que você faz.</p>
   <div class="notice">
-    <p><strong>Antes de começar:</strong> este diagnóstico é tão preciso quanto as suas respostas. Respostas vagas e incompletas geram um documento igualmente vago e incompleto. Reserve 20 minutos de verdade, sem pressa, e responda com toda a honestidade que você conseguir.</p>
+    <p><strong>Antes de começar:</strong> este diagnóstico é tão preciso quanto as suas respostas. Respostas vagas e incompletas geram um documento igualmente vago e incompleto. Reserve 20 minutos de verdade, sem pressa.</p>
   </div>
   <button class="btn-primary" onclick="startForm()">Começar</button>
   <p class="meta">11 perguntas · aproximadamente 20 minutos</p>
 </div>
 
-<!-- FORM -->
 <div id="screen-form" class="screen">
   <div class="progress-header">
     <span>Sem Reservas</span>
@@ -119,14 +116,12 @@ svg{display:inline-block;}
   </div>
 </div>
 
-<!-- LOADING -->
 <div id="screen-loading" class="screen">
   <div class="spinner"></div>
   <h2 class="loading-title">Cruzando suas respostas</h2>
   <p class="loading-sub">Isso leva alguns segundos.<br>Suas respostas estão sendo lidas com atenção.</p>
 </div>
 
-<!-- RESULT -->
 <div id="screen-result" class="screen">
   <div class="result-header">
     <div class="anchor-icon">
@@ -147,7 +142,7 @@ svg{display:inline-block;}
 </div>
 
 <script>
-const questions = [
+var questions = [
   {id:"infancia",block:"Quem você sempre foi",num:"01",label:"Quando você era criança ou adolescente, o que você fazia que te fazia perder a noção do tempo — algo que escolhia por vontade própria, sem ninguém pedir?",hint:"Não precisa ser nada grandioso. Pode ser colecionar algo, resolver problemas, cuidar de pessoas, organizar ideias, contar histórias. O que importa é que era genuinamente seu.",rows:5},
   {id:"talento",block:"Quem você sempre foi",num:"01",label:"Pense em algo que você faz hoje — no trabalho ou fora dele — que as pessoas ao seu redor pedem sua ajuda com frequência, mas que para você parece óbvio, quase simples demais para ser considerado um talento. O que é isso?",hint:"Talentos reais costumam ser invisíveis para quem os tem. Se alguém já te disse 'você tem um jeito especial de...' essa é uma pista.",rows:5},
   {id:"lacuna",block:"O que você enxerga",num:"02",label:"Quando você observa pessoas na sua área de atuação — qual é a lacuna que você enxerga com mais clareza? O que está faltando que ninguém parece estar oferecendo do jeito certo?",hint:"Pode ser uma forma de tratar, de explicar, de acolher, de resolver. Algo que te incomoda ver sendo feito de forma incompleta ou errada.",rows:5},
@@ -161,56 +156,18 @@ const questions = [
   {id:"persona",block:"O que você ainda não disse",num:"05",label:"Descreva com detalhes a pessoa que você mais quer ajudar — não um público-alvo, uma pessoa real. Quem é ela, o que ela carrega, o que ela tenta fazer e não consegue?",hint:"Quanto mais específica for essa resposta, mais poderoso será o diagnóstico. 'A Juliana, advogada de 38 anos, que sabe que é boa mas se sente invisível online' — isso ajuda.",rows:5}
 ];
 
-const PROMPT = `Você é Larissa Fagundes, estrategista de marca e conteúdo para profissionais liberais. Com base nas respostas abaixo, gere um diagnóstico de marca pessoal personalizado e direto. Use TODAS as respostas para cruzar informações. Estrutura obrigatória:
+var PROMPT = "Você é Larissa Fagundes, estrategista de marca e conteúdo para profissionais liberais. Com base nas respostas abaixo, gere um diagnóstico de marca pessoal personalizado. Use TODAS as respostas para cruzar informações. Estrutura:\n\n## Sua Essência\n[2 parágrafos sobre quem essa pessoa é]\n\n---\n\n## Sua Frase Central\n> [Uma frase única e memorável]\n\n---\n\n## Seu Lugar de Fala\n[1-2 parágrafos]\n\n---\n\n## Suas Linhas Editoriais\n**[Nome]**\n[2 linhas]\n**[Nome]**\n[2 linhas]\n**[Nome]**\n[2 linhas]\n**[Nome]**\n[2 linhas]\n\n---\n\n## O Ponto em que Tudo se Encontra\n[1-2 parágrafos]\n\n---\n\n## O Que Você Estava Segurando\n[1 parágrafo]\n\n---\n\n## Uma Palavra Para Você\n[1 parágrafo final]\n\nRegras: seja específica, use as respostas dela, tom quente e direto.";
 
-## Sua Essência
-[2 parágrafos sobre quem essa pessoa é, conectando infância, talentos e propósito]
-
----
-
-## Sua Frase Central
-> [Uma frase única e memorável que define quem ela é e para quem fala]
-
----
-
-## Seu Lugar de Fala
-[1-2 parágrafos sobre onde ela tem autoridade real para falar]
-
----
-
-## Suas Linhas Editoriais
-**[Nome]**
-[2 linhas]
-**[Nome]**
-[2 linhas]
-**[Nome]**
-[2 linhas]
-**[Nome]**
-[2 linhas]
-
----
-
-## O Ponto em que Tudo se Encontra
-[1-2 parágrafos mostrando onde paixão, talento, missão e profissão convergem]
-
----
-
-## O Que Você Estava Segurando
-[1 parágrafo direto sobre o que ela ainda não disse mas precisa dizer]
-
----
-
-## Uma Palavra Para Você
-[1 parágrafo final caloroso e honesto]
-
-Regras: seja específica, use as respostas dela, tom quente e direto, nunca genérico.`;
-const blockNums = ['01','02','03','04','05'];
-let current = 0;
-let answers = {};
-let resultText = '';
+var blockNums = ['01','02','03','04','05'];
+var current = 0;
+var answers = {};
+var resultText = '';
 
 function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].classList.remove('active');
+  }
   document.getElementById('screen-' + id).classList.add('active');
 }
 
@@ -222,38 +179,37 @@ function startForm() {
 }
 
 function renderQuestion() {
-  const q = questions[current];
-  document.getElementById('counter').textContent = (current+1) + ' de ' + questions.length;
-  document.getElementById('progress-fill').style.width = (((current+1)/questions.length)*100) + '%';
+  var q = questions[current];
+  document.getElementById('counter').textContent = (current + 1) + ' de ' + questions.length;
+  document.getElementById('progress-fill').style.width = (((current + 1) / questions.length) * 100) + '%';
   document.getElementById('block-num').textContent = q.num;
   document.getElementById('block-name').textContent = q.block;
   document.getElementById('question-label').textContent = q.label;
   document.getElementById('question-hint').textContent = q.hint;
-  const input = document.getElementById('answer-input');
+  var input = document.getElementById('answer-input');
   input.value = answers[q.id] || '';
   input.rows = q.rows;
   document.getElementById('error-msg').style.display = 'none';
   document.getElementById('btn-back').disabled = current === 0;
   updateNextBtn();
 
-  // block dots
-  const dots = document.getElementById('block-dots');
+  var dots = document.getElementById('block-dots');
   dots.innerHTML = '';
-  blockNums.forEach(function(n) {
-    const d = document.createElement('div');
-    d.className = 'block-dot' + (n <= q.num ? ' active' : '');
+  for (var i = 0; i < blockNums.length; i++) {
+    var d = document.createElement('div');
+    d.className = 'block-dot' + (blockNums[i] <= q.num ? ' active' : '');
     dots.appendChild(d);
-  });
+  }
 
   input.oninput = function() {
-    answers[q.id] = input.value;
+    answers[questions[current].id] = input.value;
     updateNextBtn();
   };
 }
 
 function updateNextBtn() {
-  const val = (answers[questions[current].id] || '').trim();
-  const btn = document.getElementById('btn-next');
+  var val = (answers[questions[current].id] || '').trim();
+  var btn = document.getElementById('btn-next');
   btn.disabled = !val;
   btn.textContent = current === questions.length - 1 ? 'Gerar diagnóstico' : 'Próxima';
 }
@@ -263,7 +219,7 @@ function prevQ() {
 }
 
 function nextQ() {
-  const val = (answers[questions[current].id] || '').trim();
+  var val = (answers[questions[current].id] || '').trim();
   if (!val) return;
   if (current < questions.length - 1) {
     current++;
@@ -275,27 +231,33 @@ function nextQ() {
 
 async function generate() {
   show('loading');
-  const content = questions.map(function(q) {
-    return q.label + '\n' + (answers[q.id] || '(sem resposta)');
-  }).join('\n\n');
-
+  var content = '';
+  for (var i = 0; i < questions.length; i++) {
+    content += questions[i].label + '\n' + (answers[questions[i].id] || '(sem resposta)') + '\n\n';
+  }
   try {
-    const r = await fetch('https://vavcyaxsszyczjqafnfx.supabase.co/functions/v1/anthropic-proxy', {
+    var r = await fetch('https://vavcyaxsszyczjqafnfx.supabase.co/functions/v1/anthropic-proxy', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2500,
+        max_tokens: 1000,
         system: PROMPT,
         messages: [{role: 'user', content: content}]
       })
     });
-    const d = await r.json();
-    const t = (d.content || []).map(function(b){return b.text||'';}).join('');
+    var d = await r.json();
+    var t = '';
+    if (d.content) {
+      for (var i = 0; i < d.content.length; i++) {
+        t += d.content[i].text || '';
+      }
+    }
     if (!t) throw new Error('vazio');
     resultText = t;
     renderResult(t);
     show('result');
+    if (typeof fbq !== 'undefined') { fbq('track', 'Lead'); }
   } catch(e) {
     show('form');
     document.getElementById('error-msg').style.display = 'block';
@@ -303,43 +265,46 @@ async function generate() {
 }
 
 function renderResult(text) {
-  const card = document.getElementById('result-card');
-  const lines = text.split('\n');
-  let html = '';
-  lines.forEach(function(line) {
-    if (line.startsWith('## ')) {
-      html += '<h2>' + line.replace('## ','') + '</h2>';
-    } else if (line.startsWith('> ')) {
-      html += '<blockquote>' + line.replace('> ','') + '</blockquote>';
-    } else if (line.startsWith('**') && line.endsWith('**')) {
-      html += '<strong>' + line.replace(/\*\*/g,'') + '</strong>';
-    } else if (line.startsWith('---')) {
+  var card = document.getElementById('result-card');
+  var lines = text.split('\n');
+  var html = '';
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (line.indexOf('## ') === 0) {
+      html += '<h2>' + line.replace('## ', '') + '</h2>';
+    } else if (line.indexOf('> ') === 0) {
+      html += '<blockquote>' + line.replace('> ', '') + '</blockquote>';
+    } else if (line.indexOf('**') === 0 && line.lastIndexOf('**') === line.length - 2) {
+      html += '<strong>' + line.replace(/\*\*/g, '') + '</strong>';
+    } else if (line === '---') {
       html += '<hr>';
     } else if (line.trim() === '') {
       html += '<br>';
     } else {
       html += '<p>' + line + '</p>';
     }
-  });
+  }
   card.innerHTML = html;
 }
 
 function downloadPDF() {
-  const lines = resultText.split('\n');
-  let body = '';
-  lines.forEach(function(line) {
-    if (line.startsWith('## ')) body += '<h2>'+line.replace('## ','')+'</h2>';
-    else if (line.startsWith('> ')) body += '<blockquote>'+line.replace('> ','')+'</blockquote>';
-    else if (line.startsWith('**') && line.endsWith('**')) body += '<p><strong>'+line.replace(/\*\*/g,'')+'</strong></p>';
-    else if (line.startsWith('---')) body += '<hr>';
-    else if (line.trim()==='') body += '<br>';
-    else body += '<p>'+line+'</p>';
-  });
-  const html = '<html><head><meta charset="UTF-8"><style>body{font-family:Georgia,serif;color:#2C1A0E;padding:60px;max-width:740px;margin:0 auto;line-height:1.8}.hdr{text-align:center;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid #DDD0B8}.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#8B6914;margin-bottom:12px}h1{font-size:2rem;color:#2C1A0E;margin:0}h2{font-family:Georgia,serif;font-size:1.2rem;color:#6B4C2A;margin-top:40px;margin-bottom:12px}blockquote{border-left:3px solid #D4A853;padding-left:20px;margin:24px 0;font-style:italic;font-size:1.15rem;color:#6B4C2A}p{margin-bottom:14px}strong{font-weight:600}hr{border:none;border-top:1px solid #DDD0B8;margin:32px 0}.ftr{text-align:center;margin-top:60px;font-size:.8rem;color:#9E8060}</style></head><body><div class="hdr"><div class="brand">Larissa Fagundes · Sem Reservas</div><h1>Diagnóstico de Voz</h1></div>'+body+'<div class="ftr">larissampfagundes.com.br</div></body></html>';
-  const b = new Blob([html], {type:'text/html'});
-  const u = URL.createObjectURL(b);
-  const w = window.open(u,'_blank');
-  if(w){w.onload=function(){w.print();URL.revokeObjectURL(u);};}
+  var lines = resultText.split('\n');
+  var body = '';
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (line.indexOf('## ') === 0) body += '<h2>' + line.replace('## ', '') + '</h2>';
+    else if (line.indexOf('> ') === 0) body += '<blockquote>' + line.replace('> ', '') + '</blockquote>';
+    else if (line.indexOf('**') === 0 && line.lastIndexOf('**') === line.length - 2) body += '<p><strong>' + line.replace(/\*\*/g, '') + '</strong></p>';
+    else if (line === '---') body += '<hr>';
+    else if (line.trim() === '') body += '<br>';
+    else body += '<p>' + line + '</p>';
+  }
+  var style = 'body{font-family:Georgia,serif;color:#2C1A0E;padding:60px;max-width:740px;margin:0 auto;line-height:1.8}.hdr{text-align:center;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid #DDD0B8}.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#8B6914;margin-bottom:12px}h1{font-size:2rem;color:#2C1A0E;margin:0}h2{font-family:Georgia,serif;font-size:1.2rem;color:#6B4C2A;margin-top:40px;margin-bottom:12px}blockquote{border-left:3px solid #D4A853;padding-left:20px;margin:24px 0;font-style:italic;font-size:1.15rem;color:#6B4C2A}p{margin-bottom:14px}strong{font-weight:600}hr{border:none;border-top:1px solid #DDD0B8;margin:32px 0}.ftr{text-align:center;margin-top:60px;font-size:.8rem;color:#9E8060}';
+  var html = '<html><head><meta charset="UTF-8"><style>' + style + '</style></head><body><div class="hdr"><div class="brand">Larissa Fagundes - Sem Reservas</div><h1>Diagnostico de Voz</h1></div>' + body + '<div class="ftr">larissampfagundes.com.br</div></body></html>';
+  var b = new Blob([html], {type: 'text/html'});
+  var u = URL.createObjectURL(b);
+  var w = window.open(u, '_blank');
+  if (w) { w.onload = function() { w.print(); URL.revokeObjectURL(u); }; }
 }
 
 function restart() {
