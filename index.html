@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2552269905201656');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2552269905201656&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sem Reservas — Diagnóstico de Voz | Larissa Fagundes</title>
@@ -318,7 +335,24 @@ function downloadPDF() {
     else if (line.trim()==='') body += '<br>';
     else body += '<p>'+line+'</p>';
   });
-  const html = '<html><head><meta charset="UTF-8"><style>body{font-family:Georgia,serif;color:#2C1A0E;padding:60px;max-width:740px;margin:0 auto;line-height:1.8}.hdr{text-align:center;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid #DDD0B8}.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#8B6914;margin-bottom:12px}h1{font-size:2rem;color:#2C1A0E;margin:0}h2{font-family:Georgia,serif;font-size:1.2rem;color:#6B4C2A;margin-top:40px;margin-bottom:12px}blockquote{border-left:3px solid #D4A853;padding-left:20px;margin:24px 0;font-style:italic;font-size:1.15rem;color:#6B4C2A}p{margin-bottom:14px}strong{font-weight:600}hr{border:none;border-top:1px solid #DDD0B8;margin:32px 0}.ftr{text-align:center;margin-top:60px;font-size:.8rem;color:#9E8060}</style></head><body><div class="hdr"><div class="brand">Larissa Fagundes · Sem Reservas</div><h1>Diagnóstico de Voz</h1></div>'+body+'<div class="ftr">larissampfagundes.com.br</div></body></html>';
+  const html = '<html><head>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2552269905201656');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2552269905201656&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code --><meta charset="UTF-8"><style>body{font-family:Georgia,serif;color:#2C1A0E;padding:60px;max-width:740px;margin:0 auto;line-height:1.8}.hdr{text-align:center;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid #DDD0B8}.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#8B6914;margin-bottom:12px}h1{font-size:2rem;color:#2C1A0E;margin:0}h2{font-family:Georgia,serif;font-size:1.2rem;color:#6B4C2A;margin-top:40px;margin-bottom:12px}blockquote{border-left:3px solid #D4A853;padding-left:20px;margin:24px 0;font-style:italic;font-size:1.15rem;color:#6B4C2A}p{margin-bottom:14px}strong{font-weight:600}hr{border:none;border-top:1px solid #DDD0B8;margin:32px 0}.ftr{text-align:center;margin-top:60px;font-size:.8rem;color:#9E8060}</style></head><body><div class="hdr"><div class="brand">Larissa Fagundes · Sem Reservas</div><h1>Diagnóstico de Voz</h1></div>'+body+'<div class="ftr">larissampfagundes.com.br</div></body></html>';
   const b = new Blob([html], {type:'text/html'});
   const u = URL.createObjectURL(b);
   const w = window.open(u,'_blank');
